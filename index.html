@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon - Official Website</title>
+    
+    <!-- Dynamic Favicon Link Tag -->
+    <link id="dynamic-favicon" rel="icon" type="image/png" href="IMG_6762.PNG">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    colors: {
+                        dragonBlue: '#2563eb',
+                        glassBgLight: 'rgba(255, 255, 255, 0.75)',
+                        glassBgDark: 'rgba(15, 23, 42, 0.75)',
+                        glassBorderLight: 'rgba(255, 255, 255, 0.8)',
+                        glassBorderDark: 'rgba(255, 255, 255, 0.1)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-gradient-light: radial-gradient(circle at 10% 10%, #eef2f7 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --bg-gradient-dark: radial-gradient(circle at 10% 10%, #0d111a 0%, #090d16 50%, #030712 100%);
+        }
+
+        body {
+            background: var(--bg-gradient-dark);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background 0.4s ease, color 0.4s ease;
+            color: #f8fafc;
+        }
+
+        html.light body {
+            background: var(--bg-gradient-light);
+            color: #0f172a;
+        }
+
+        /* Dark Mode Styling Defaults */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* Light Mode Styling Override */
+        html.light .glass-panel {
+            background: rgba(255, 255, 255, 0.82);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.08);
+        }
+
+        html.light .glass-card {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+        }
+
+        /* Hover Styles Strictly Scoped to Non-Touch / Desktop Devices */
+        @media (hover: hover) and (pointer: fine) {
+            .glass-card:hover {
+                transform: translateY(-3px);
+                border-color: rgba(37, 99, 235, 0.4);
+                box-shadow: 0 14px 35px rgba(37, 99, 235, 0.15);
+            }
+            .interactive-btn:hover {
+                transform: scale(1.02);
+            }
+            .hamburger-btn-hover:hover {
+                background-color: rgba(0, 0, 0, 0.05);
+            }
+            html.dark .hamburger-btn-hover:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        .hamburger-box {
+            width: 26px;
+            height: 16px;
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .hamburger-line {
+            width: 100%;
+            height: 2.5px;
+            background-color: currentColor;
+            border-radius: 4px;
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), top 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            left: 0;
+        }
+
+        .hamburger-line:nth-child(1) { top: 2px; }
+        .hamburger-line:nth-child(2) { top: 12px; }
+
+        /* Direct Morph into X */
+        .hamburger-box.is-active .hamburger-line:nth-child(1) {
+            top: 7px;
+            transform: rotate(45deg);
+        }
+
+        .hamburger-box.is-active .hamburger-line:nth-child(2) {
+            top: 7px;
+            transform: rotate(-45deg);
+        }
+
+        #nav-menu {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease-out;
+        }
+
+        #nav-menu.is-open {
+            max-height: 420px;
+            opacity: 1;
+        }
+
+        .menu-item {
+            opacity: 0;
+            transform: translateY(-8px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        #nav-menu.is-open .menu-item {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Staggered transition delays for dropdown elements */
+        #nav-menu.is-open .menu-item:nth-child(1) { transition-delay: 0.06s; }
+        #nav-menu.is-open .menu-item:nth-child(2) { transition-delay: 0.10s; }
+        #nav-menu.is-open .menu-item:nth-child(3) { transition-delay: 0.14s; }
+        #nav-menu.is-open .menu-item:nth-child(4) { transition-delay: 0.18s; }
+        #nav-menu.is-open .menu-item:nth-child(5) { transition-delay: 0.22s; }
+    </style>
+</head>
+<body class="font-sans antialiased selection:bg-blue-600 selection:text-white">
+
+    <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 dark:bg-blue-500/15 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-slate-600/10 dark:bg-slate-400/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+
+    <header class="sticky top-0 z-50 w-full glass-panel">
+        <nav id="header-bar" class="w-full max-w-6xl mx-auto">
+            <!-- Top Navigation Bar Row -->
+            <div class="flex items-center justify-between px-6 py-4">
+                <!-- Logo Left - Reloads page and scrolls to top -->
+                <a href="#" id="logo-link" class="flex items-center space-x-2 focus:outline-none cursor-pointer">
+                    <img id="logo-img" 
+                         src="IMG_6762.PNG" 
+                         alt="Dragon Logo" 
+                         class="h-9 sm:h-10 w-auto object-contain transition-opacity duration-300"
+                         onerror="this.onerror=null; this.src='https://placehold.co/120x40/0f172a/ffffff?text=DRAGON';">
+                </a>
+
+                <!-- 2-Line Hamburger Icon Button Right -->
+                <button id="hamburger-btn" 
+                        aria-label="Toggle navigation menu" 
+                        class="hamburger-btn-hover p-2.5 text-slate-900 dark:text-slate-100 focus:outline-none rounded-xl transition-colors">
+                    <div class="hamburger-box">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </div>
+                </button>
+            </div>
+
+            <!-- Non-Floating Navigation Menu Drawer -->
+            <div id="nav-menu" class="w-full px-6 pb-2">
+                <div class="border-t border-slate-300/80 dark:border-slate-700/60 pt-4 pb-4 space-y-2">
+                    <a href="#cookbook" class="menu-item flex items-center justify-between p-3 rounded-xl hover:bg-black/5 dark:hover:bg-white/5 text-slate-900 dark:text-slate-100 font-semibold transition-colors">
+                        <span class="text-base">Dragon Cookbook</span>
+                        <span class="text-xs font-bold px-2.5 py-0.5 rounded-full bg-blue-600/15 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400 border border-blue-600/30">New</span>
+                    </a>
+                    <a href="#dragonweb" class="menu-item block p-3 rounded-xl text-base font-semibold text-slate-900 dark:text-slate-100 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                        DragonWeb
+                    </a>
+                    <a href="#dragonos" class="menu-item block p-3 rounded-xl text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                        DragonOS <span class="text-xs text-slate-500 dark:text-slate-400 ml-1">(work in progress)</span>
+                    </a>
+                    <a href="#nova-ai" class="menu-item block p-3 rounded-xl text-base font-medium text-slate-700 dark:text-slate-300 hover:bg-black/5 dark:hover:bg-white/5 transition-colors">
+                        Nova AI <span class="text-xs text-slate-500 dark:text-slate-400 ml-1">(work in progress)</span>
+                    </a>
+
+                    <div class="menu-item pt-3 border-t border-slate-300/70 dark:border-slate-700/50 flex items-center justify-center space-x-3">
+                        <!-- System Theme Button -->
+                        <button id="theme-system-btn" title="System Theme" class="p-2.5 px-4 rounded-xl glass-card flex items-center space-x-2 text-slate-900 dark:text-slate-100 font-semibold transition-all">
+                            <i id="device-icon" class="fa-solid fa-desktop text-sm"></i>
+                            <span class="text-xs">System</span>
+                        </button>
+
+                        <!-- Light Theme Button -->
+                        <button id="theme-light-btn" title="Light Mode" class="p-2.5 px-4 rounded-xl glass-card flex items-center space-x-2 text-slate-900 dark:text-slate-100 font-semibold transition-all">
+                            <i class="fa-solid fa-sun text-sm text-amber-500"></i>
+                            <span class="text-xs">Light</span>
+                        </button>
+
+                        <!-- Dark Theme Button -->
+                        <button id="theme-dark-btn" title="Dark Mode" class="p-2.5 px-4 rounded-xl glass-card flex items-center space-x-2 text-slate-900 dark:text-slate-100 font-semibold transition-all">
+                            <i class="fa-solid fa-moon text-sm text-blue-400"></i>
+                            <span class="text-xs">Dark</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 space-y-16">
+        
+        <!-- Hero Section without outer border -->
+        <section class="text-center pt-4 sm:pt-10 space-y-6">
+            <div class="relative inline-block max-w-4xl mx-auto overflow-hidden rounded-2xl sm:rounded-3xl p-0">
+                <img id="hero-img" 
+                     src="Untitled design 2.PNG" 
+                     alt="Dragon Hero Showcase" 
+                     class="w-full h-auto rounded-2xl sm:rounded-3xl object-cover shadow-2xl transition-opacity duration-300"
+                     onerror="this.onerror=null; this.src='https://placehold.co/1000x500/0f172a/ffffff?text=Dragon+Showcase';">
+            </div>
+            <h1 class="text-3xl sm:text-5xl font-black tracking-tight text-slate-900 dark:text-white">
+                Welcome to Dragon! Discover our apps now.
+            </h1>
+        </section>
+
+        <section id="cookbook" class="glass-card rounded-3xl p-6 sm:p-10 space-y-8">
+            <div class="space-y-3 max-w-3xl">
+                <div class="inline-flex items-center space-x-2 bg-blue-600/10 dark:bg-blue-500/20 border border-blue-600/30 px-3 py-1 rounded-full text-blue-700 dark:text-blue-400 text-xs font-bold">
+                    <span>iOS & Android</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">Dragon Cookbook</h2>
+                <p class="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed font-medium">
+                    A digital cooking app for iOS and Android that works offline, lets you search through your recipes, lets you spin a spinner if you cannot decide, and you can export your entire library, send it to your friends and they can get your recipes directly from their phone.
+                </p>
+            </div>
+
+            <!-- Dragon Cookbook Screenshots Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Image 1: Main Home Tab -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[9/16] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="cb-img-1" src="IMG_6747.PNG" alt="Main Home Tab" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x533/0f172a/ffffff?text=Home+Tab';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Main Home Tab</p>
+                </div>
+
+                <!-- Image 2: Search Recipes -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[9/16] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="cb-img-2" src="IMG_6756.PNG" alt="Search Recipes" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x533/0f172a/ffffff?text=Search+Recipes';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Search Recipes</p>
+                </div>
+
+                <!-- Image 3: Spinner -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[9/16] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="cb-img-3" src="IMG_6751.PNG" alt="Decision Spinner" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x533/0f172a/ffffff?text=Recipe+Spinner';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Recipe Spinner</p>
+                </div>
+
+                <!-- Image 4: Export & Import -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[9/16] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="cb-img-4" src="IMG_6753.PNG" alt="Export & Import" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/300x533/0f172a/ffffff?text=Export+%26+Import';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Export & Import</p>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="pt-2">
+                <a href="https://milanovv7.github.io/dragoncookbook/" target="_blank" rel="noopener noreferrer" 
+                   class="interactive-btn inline-flex items-center justify-center space-x-3 w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                    <span>Get Dragon Cookbook on your phone</span>
+                </a>
+            </div>
+        </section>
+
+        <section id="dragonweb" class="glass-card rounded-3xl p-6 sm:p-10 space-y-8">
+            <div class="space-y-3 max-w-3xl">
+                <div class="inline-flex items-center space-x-2 bg-slate-800/10 dark:bg-slate-200/10 border border-slate-800/20 dark:border-slate-200/20 px-3 py-1 rounded-full text-slate-800 dark:text-slate-200 text-xs font-bold">
+                    <span>Desktop Browser</span>
+                </div>
+                <h2 class="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white">DragonWeb</h2>
+                <p class="text-slate-700 dark:text-slate-300 text-sm sm:text-base leading-relaxed font-medium">
+                    A powerful desktop web browser built with Dragon Profiles, allowing you to seamlessly separate your workspaces, personal browsing, and creative projects in distinct clean environments.
+                </p>
+            </div>
+
+            <!-- DragonWeb Screenshots Showcase -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Image 1: Dragon Profiles -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="dw-img-1" src="Screenshot 2026-10-05 at 12.28.18 PM.png" alt="Dragon Profiles" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/600x375/0f172a/ffffff?text=Dragon+Profiles';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Dragon Profiles</p>
+                </div>
+
+                <!-- Image 2: Home Page -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="dw-img-2" src="Screenshot 2026-10-05 at 1.01.53 PM.png" alt="Home Page" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/600x375/0f172a/ffffff?text=Home+Page';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Browser Home Page</p>
+                </div>
+
+                <!-- Image 3: Workspace Experience -->
+                <div class="glass-panel p-3 rounded-2xl space-y-2">
+                    <div class="aspect-[16/10] rounded-xl overflow-hidden bg-slate-200/80 dark:bg-slate-800/60 flex items-center justify-center">
+                        <img id="dw-img-3" src="Screenshot 2026-10-05 at 2.14.41 PM.png" alt="Browser Workspace" class="w-full h-full object-cover rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/600x375/0f172a/ffffff?text=Workspace+View';">
+                    </div>
+                    <p class="text-xs text-center font-bold text-slate-800 dark:text-slate-200 pt-1">Workspace Experience</p>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="pt-2">
+                <a href="https://getdragonweb.netlify.app/" target="_blank" rel="noopener noreferrer" 
+                   class="interactive-btn inline-flex items-center justify-center space-x-3 w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold shadow-lg shadow-slate-900/20 dark:shadow-slate-100/10 transition-all">
+                    <i class="fa-solid fa-desktop"></i>
+                    <span>Get DragonWeb on your computer</span>
+                </a>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- DragonOS Section -->
+            <div id="dragonos" class="glass-card rounded-3xl p-8 flex flex-col justify-between space-y-6 relative overflow-hidden">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center space-x-2 bg-amber-500/15 border border-amber-500/30 px-3 py-1 rounded-full text-amber-700 dark:text-amber-400 text-xs font-bold">
+                        <span>Operating System</span>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">DragonOS</h3>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                        Next generation operating environment engineered for speed, modularity, and smooth user experience.
+                    </p>
+                </div>
+
+                <div class="py-12 flex flex-col items-center justify-center space-y-3 bg-slate-200/60 dark:bg-slate-800/40 rounded-2xl border border-black/5 dark:border-white/5">
+                    <div class="p-4 rounded-2xl bg-amber-500/15 text-amber-700 dark:text-amber-400">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Work In Progress</span>
+                </div>
+            </div>
+
+            <!-- Nova AI Section -->
+            <div id="nova-ai" class="glass-card rounded-3xl p-8 flex flex-col justify-between space-y-6 relative overflow-hidden">
+                <div class="space-y-3">
+                    <div class="inline-flex items-center space-x-2 bg-blue-600/10 dark:bg-blue-500/20 border border-blue-600/30 px-3 py-1 rounded-full text-blue-700 dark:text-blue-400 text-xs font-bold">
+                        <span>Artificial Intelligence</span>
+                    </div>
+                    <h3 class="text-2xl font-extrabold text-slate-900 dark:text-white">Nova AI</h3>
+                    <p class="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                        Intelligent assistant seamlessly integrated across all Dragon products for adaptive productivity.
+                    </p>
+                </div>
+
+                <div class="py-12 flex flex-col items-center justify-center space-y-3 bg-slate-200/60 dark:bg-slate-800/40 rounded-2xl border border-black/5 dark:border-white/5">
+                    <div class="p-4 rounded-2xl bg-blue-600/15 text-blue-700 dark:text-blue-400">
+                        <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                    </div>
+                    <span class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Work In Progress</span>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="max-w-6xl mx-auto px-4 sm:px-8 pb-10 pt-6">
+        <div class="glass-panel rounded-2xl p-6 text-center text-xs sm:text-sm font-semibold text-slate-700 dark:text-slate-300">
+            ©2025-2026 Dragon LLC Macedonia
+        </div>
+    </footer>
+
+    <script>
+        // DOM Handles
+        const htmlEl = document.documentElement;
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const hamburgerBox = hamburgerBtn.querySelector('.hamburger-box');
+        const navMenu = document.getElementById('nav-menu');
+        const headerBar = document.getElementById('header-bar');
+        const deviceIcon = document.getElementById('device-icon');
+        const logoLink = document.getElementById('logo-link');
+        const faviconEl = document.getElementById('dynamic-favicon');
+
+        const themeSystemBtn = document.getElementById('theme-system-btn');
+        const themeLightBtn = document.getElementById('theme-light-btn');
+        const themeDarkBtn = document.getElementById('theme-dark-btn');
+
+        // Favicon management strictly tied to System Theme
+        function updateSystemFavicon() {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (faviconEl) {
+                faviconEl.href = prefersDark ? 'IMG_6762.PNG' : 'IMG_6761 3.PNG';
+            }
+        }
+
+        // Image Swap Config
+        const imageAssets = {
+            logo: {
+                light: 'IMG_6761 3.PNG',
+                dark: 'IMG_6762.PNG',
+                el: document.getElementById('logo-img')
+            },
+            hero: {
+                light: 'Untitled design.PNG',
+                dark: 'Untitled design 2.PNG',
+                el: document.getElementById('hero-img')
+            },
+            cookbook: [
+                { light: 'IMG_6746.PNG', dark: 'IMG_6747.PNG', el: document.getElementById('cb-img-1') },
+                { light: 'IMG_6755.PNG', dark: 'IMG_6756.PNG', el: document.getElementById('cb-img-2') },
+                { light: 'IMG_6750.PNG', dark: 'IMG_6751.PNG', el: document.getElementById('cb-img-3') },
+                { light: 'IMG_6752.PNG', dark: 'IMG_6753.PNG', el: document.getElementById('cb-img-4') }
+            ],
+            dragonweb: [
+                { light: 'Screenshot 2026-10-05 at 12.28.01 PM.png', dark: 'Screenshot 2026-10-05 at 12.28.18 PM.png', el: document.getElementById('dw-img-1') },
+                { light: 'Screenshot 2026-10-05 at 1.00.52 PM.png', dark: 'Screenshot 2026-10-05 at 1.01.53 PM.png', el: document.getElementById('dw-img-2') },
+                { light: 'Screenshot 2026-10-05 at 1.02.31 PM.png', dark: 'Screenshot 2026-10-05 at 2.14.41 PM.png', el: document.getElementById('dw-img-3') }
+            ]
+        };
+
+        let currentThemeMode = 'system';
+
+        function updateDeviceIcon() {
+            if (window.innerWidth <= 768) {
+                deviceIcon.className = 'fa-solid fa-mobile-screen-button text-sm';
+            } else {
+                deviceIcon.className = 'fa-solid fa-desktop text-sm';
+            }
+        }
+
+        function applyTheme(mode) {
+            currentThemeMode = mode;
+            let effectiveDark = false;
+
+            if (mode === 'system') {
+                effectiveDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            } else {
+                effectiveDark = (mode === 'dark');
+            }
+
+            if (effectiveDark) {
+                htmlEl.classList.add('dark');
+                htmlEl.classList.remove('light');
+            } else {
+                htmlEl.classList.remove('dark');
+                htmlEl.classList.add('light');
+            }
+
+            // Highlight Active Mode Buttons
+            [themeSystemBtn, themeLightBtn, themeDarkBtn].forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+            });
+
+            if (mode === 'system') themeSystemBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+            if (mode === 'light') themeLightBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+            if (mode === 'dark') themeDarkBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+
+            // Swap Images according to active mode
+            const themeKey = effectiveDark ? 'dark' : 'light';
+            
+            if (imageAssets.logo.el) imageAssets.logo.el.src = imageAssets.logo[themeKey];
+            if (imageAssets.hero.el) imageAssets.hero.el.src = imageAssets.hero[themeKey];
+
+            imageAssets.cookbook.forEach(item => {
+                if (item.el) item.el.src = item[themeKey];
+            });
+
+            imageAssets.dragonweb.forEach(item => {
+                if (item.el) item.el.src = item[themeKey];
+            });
+        }
+
+        function toggleMenu() {
+            if (navMenu.classList.contains('is-open')) {
+                closeMenu();
+            } else {
+                openMenu();
+            }
+        }
+
+        function openMenu() {
+            hamburgerBox.classList.add('is-active');
+            navMenu.classList.add('is-open');
+        }
+
+        function closeMenu() {
+            hamburgerBox.classList.remove('is-active');
+            navMenu.classList.remove('is-open');
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateDeviceIcon();
+            updateSystemFavicon();
+            applyTheme('system');
+
+            // Always update favicon on system theme preference change
+            window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+                updateSystemFavicon();
+                if (currentThemeMode === 'system') {
+                    applyTheme('system');
+                }
+            });
+
+            window.addEventListener('resize', updateDeviceIcon);
+
+            // Clicking logo smoothly scrolls to top without page reload
+            if (logoLink) {
+                logoLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            hamburgerBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleMenu();
+            });
+
+            themeSystemBtn.addEventListener('click', () => applyTheme('system'));
+            themeLightBtn.addEventListener('click', () => applyTheme('light'));
+            themeDarkBtn.addEventListener('click', () => applyTheme('dark'));
+
+            // Click outside to close drawer
+            document.addEventListener('click', (e) => {
+                if (!headerBar.contains(e.target)) {
+                    closeMenu();
+                }
+            });
+
+            navMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    closeMenu();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
