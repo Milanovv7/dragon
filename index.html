@@ -33,8 +33,9 @@
     
     <style>
         :root {
-            --bg-gradient-light: radial-gradient(circle at 10% 10%, #eef2f7 0%, #e2e8f0 50%, #cbd5e1 100%);
-            --bg-gradient-dark: radial-gradient(circle at 10% 10%, #0d111a 0%, #090d16 50%, #030712 100%);
+            /* Smooth background transition: Black/White top gradient morphing into subtle blue around Dragon Cookbook */
+            --bg-gradient-dark: linear-gradient(180deg, #020617 0%, #020617 28%, #09132d 65%, #030712 100%);
+            --bg-gradient-light: linear-gradient(180deg, #ffffff 0%, #ffffff 28%, #e0e7ff 65%, #cbd5e1 100%);
         }
 
         body {
@@ -70,7 +71,7 @@
 
         /* Light Mode Styling Override */
         html.light .glass-panel {
-            background: rgba(255, 255, 255, 0.82);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.9);
@@ -78,7 +79,7 @@
         }
 
         html.light .glass-card {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.9);
@@ -166,24 +167,32 @@
         #nav-menu.is-open .menu-item:nth-child(3) { transition-delay: 0.14s; }
         #nav-menu.is-open .menu-item:nth-child(4) { transition-delay: 0.18s; }
         #nav-menu.is-open .menu-item:nth-child(5) { transition-delay: 0.22s; }
+
+        /* Theme button active indicator state class */
+        .theme-btn-active {
+            border-color: #2563eb !important;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.5) !important;
+            background-color: rgba(37, 99, 235, 0.12) !important;
+        }
     </style>
 </head>
 <body class="font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-    <div class="fixed top-[-10%] left-[-10%] w-[500px] h-[500px] bg-blue-600/10 dark:bg-blue-500/15 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+    <!-- Ambient Blue Glow positioned right around Dragon Cookbook section -->
+    <div class="fixed top-[45%] left-[-10%] w-[550px] h-[550px] bg-blue-600/15 dark:bg-blue-500/20 rounded-full blur-[140px] pointer-events-none -z-10"></div>
     <div class="fixed bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-slate-600/10 dark:bg-slate-400/10 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
     <header class="sticky top-0 z-50 w-full glass-panel">
         <nav id="header-bar" class="w-full max-w-6xl mx-auto">
             <!-- Top Navigation Bar Row -->
             <div class="flex items-center justify-between px-6 py-4">
-                <!-- Logo Left - Reloads page and scrolls to top -->
+                <!-- Logo Left - Larger size (h-11 sm:h-12) -->
                 <a href="#" id="logo-link" class="flex items-center space-x-2 focus:outline-none cursor-pointer">
                     <img id="logo-img" 
                          src="IMG_6762.PNG" 
                          alt="Dragon Logo" 
-                         class="h-9 sm:h-10 w-auto object-contain transition-opacity duration-300"
-                         onerror="this.onerror=null; this.src='https://placehold.co/120x40/0f172a/ffffff?text=DRAGON';">
+                         class="h-11 sm:h-12 w-auto object-contain transition-opacity duration-300"
+                         onerror="this.onerror=null; this.src='https://placehold.co/150x50/0f172a/ffffff?text=DRAGON';">
                 </a>
 
                 <!-- 2-Line Hamburger Icon Button Right -->
@@ -221,7 +230,7 @@
                             <span class="text-xs">System</span>
                         </button>
 
-                        <!-- Light Theme Button -->
+                        <!-- Light Theme Button with Active Indicator Styling -->
                         <button id="theme-light-btn" title="Light Mode" class="p-2.5 px-4 rounded-xl glass-card flex items-center space-x-2 text-slate-900 dark:text-slate-100 font-semibold transition-all">
                             <i class="fa-solid fa-sun text-sm text-amber-500"></i>
                             <span class="text-xs">Light</span>
@@ -487,14 +496,14 @@
                 htmlEl.classList.add('light');
             }
 
-            // Highlight Active Mode Buttons
+            // Highlight Active Theme Mode Buttons with explicit indicator style
             [themeSystemBtn, themeLightBtn, themeDarkBtn].forEach(btn => {
-                btn.classList.remove('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+                btn.classList.remove('theme-btn-active');
             });
 
-            if (mode === 'system') themeSystemBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
-            if (mode === 'light') themeLightBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
-            if (mode === 'dark') themeDarkBtn.classList.add('ring-2', 'ring-blue-600', 'bg-blue-600/10', 'dark:bg-blue-500/20');
+            if (mode === 'system') themeSystemBtn.classList.add('theme-btn-active');
+            if (mode === 'light') themeLightBtn.classList.add('theme-btn-active');
+            if (mode === 'dark') themeDarkBtn.classList.add('theme-btn-active');
 
             // Swap Images according to active mode
             const themeKey = effectiveDark ? 'dark' : 'light';
